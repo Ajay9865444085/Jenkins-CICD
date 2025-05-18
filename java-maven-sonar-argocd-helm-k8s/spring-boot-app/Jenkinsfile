@@ -28,7 +28,14 @@ pipeline {
      sh '''
   java -version
   cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-  mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}
+  # Run tests and generate coverage report
+        mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install \
+          sonar:sonar \
+          -Dsonar.projectKey=spring-boot-demo \
+          -Dsonar.host.url=${SONAR_URL} \
+          -Dsonar.login=${SONAR_AUTH_TOKEN} \
+          -Dsonar.java.binaries=target/classes \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 '''
 
         }
